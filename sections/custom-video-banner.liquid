@@ -1,0 +1,179 @@
+<section class="outter hero-video">
+  <section class="video-container">
+      <video
+        src="{{ section.settings.video_url }}"
+        autoplay
+        loop
+        playsinline
+        muted
+      ></video>
+      <div class="callout">
+        <h1>
+          {{ section.settings.heading }}
+        </h1>
+        <p>{{ section.settings.text }}</p>
+        <a class="button" href="{{ section.settings.button_link }}">{{ section.settings.button_text }}</a>
+      </div>
+  </section>
+</section>
+
+<style>
+   /* Hero Video */
+ .outter.hero-video {
+	 width: 100%;
+	 height: 100%;
+	 display: flex;
+	 flex-direction: column;
+	 justify-content: center;
+}
+ @media (max-width: 767px) {
+	 .outter.hero-video {
+		 height: 325px;
+	}
+}
+ .hero-video .video-container {
+	 height: 550px;
+	 width: 100%;
+	 position: relative;
+	 overflow: hidden;
+}
+ @media (max-width: 767px) {
+	 .hero-video .video-container {
+		 height: 325px;
+	}
+}
+ .hero-video video {
+	 object-fit: cover;
+	 position: absolute;
+	 height: 550px;
+	 width: 100%;
+	 top: 0;
+	 left: 0;
+}
+ @media (max-width: 767px) {
+	 .hero-video video {
+		 height: 325px;
+	}
+}
+ .hero-video .video-container:after {
+	 content: '';
+	 display: block;
+	 height: 100%;
+	 width: 100%;
+	 position: absolute;
+	 top: 0;
+	 left: 0;
+	 background: rgba(0, 0, 0, .2);
+	 z-index: 1;
+}
+ .hero-video h1 {
+	 text-transform: uppercase;
+	 margin: 0 0 1rem;
+	 padding: 0;
+	 line-height: 1;
+	 color: white;
+}
+   .hero-video P {
+	 margin: 0 0 1rem;
+	 padding: 0;
+	 line-height: 1;
+	 color: white;
+     font-size: 16px;
+}
+ @media (max-width: 767px) {
+	 .hero-video h1 {
+		 font-size: 32px;
+	}
+}
+ @media (min-width: 768px) {
+	 .hero-video h1 {
+		 font-size: 52px;
+	}
+}
+ .hero-video .desc {
+	 color: white;
+	 font-weight: 400;
+	 font-size: 18px;
+}
+ .hero-video .callout {
+	 position: relative;
+	 display: flex;
+	 justify-content: center;
+	 align-items: center;
+	 flex-direction: column;
+	 height: 100%;
+	 text-align: center;
+	 position: relative;
+	 z-index: 10;
+	 width: 70%;
+	 margin: auto;
+}
+ @media (max-width: 767px) {
+	 .hero-video .callout {
+		 width: 90%;
+	}
+}
+ .hero-video .button {
+	 text-transform: uppercase;
+	 background-color: transparent;
+	 border-radius: 0px;
+	 margin-top: 20px;
+	 background-color: #82bb00;
+	 padding: 15px 30px;
+	 border-radius: 0px;
+	 color: #fff;
+	 text-decoration: none;
+	 font-weight: bold;
+}
+ @media (max-width: 767px) {
+	 .hero-video .button {
+		 padding: 10px 20px;
+	}
+}
+ .hero-video .button:hover {
+	 cursor: pointer;
+	 background-color: #6e9e01;
+}
+ 
+</style>
+{% schema %}
+{
+  "name": "Video Banner",
+  "settings": [
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "Video URL",
+      "default": "https://cdn.shopify.com/s/files/1/1463/8748/files/54ed8c2510027bcfd981767b551eb733.mp4?v=1591041687"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "text",
+      "label": "text",
+      "default": "Text"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Video Banner"
+    }
+  ]
+}
+{% endschema %}

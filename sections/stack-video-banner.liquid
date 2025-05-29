@@ -1,0 +1,648 @@
+{% comment %}
+  Stack-Video-Banner
+  Created by Sachin B (github.com/sachinbhatnagar)
+
+  A versatile video banner section that supports both YouTube/Vimeo links and direct video uploads.
+  Features include stacked or side-by-side videos, responsive design, and customizable content positioning.
+{% endcomment %}
+
+{{ 'stack-video-banner.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  #Banner-{{ section.id }}::after {
+    opacity: {{ section.settings.video_overlay_opacity | divided_by: 100.0 }};
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign full_width = '100vw'
+  assign widths = '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840'
+
+  if section.settings.video_behavior == 'ambient'
+    assign half_width = '60vw'
+    assign full_width = '120vw'
+    assign stacked_sizes = '(min-width: 750px) 60vw, 120vw'
+    assign widths = '450, 660, 900, 1320, 1800, 2136, 2400, 3600, 7680'
+  elsif section.settings.video_behavior == 'fixed' or section.settings.video_behavior == 'zoom-in'
+    assign half_width = '100vw'
+    assign stacked_sizes = '100vw'
+  else
+    assign half_width = '50vw'
+    assign stacked_sizes = '(min-width: 750px) 50vw, 100vw'
+  endif
+  assign fetch_priority = 'auto'
+  if section.index == 1
+    assign fetch_priority = 'high'
+  endif
+
+  assign has_first_video = false
+  if section.settings.video != blank or section.settings.mp4_video != blank
+    assign has_first_video = true
+  endif
+
+  assign has_second_video = false
+  if section.settings.video_2 != blank or section.settings.mp4_video_2 != blank
+    assign has_second_video = true
+  endif
+
+  assign stacked_class = ''
+  if section.settings.stack_videos_on_mobile and has_first_video and has_second_video
+    assign stacked_class = ' banner--stacked'
+  endif
+
+  assign placeholder_class = ''
+  if section.settings.video == blank and section.settings.video_2 == blank and section.settings.mp4_video == blank and section.settings.mp4_video_2 == blank
+    assign placeholder_class = ' placeholder'
+  endif
+
+  assign half_class = ''
+  if has_second_video
+    assign half_class = ' banner__media-half'
+  endif
+-%}
+
+<div
+  id="Banner-{{ section.id }}"
+  class="banner banner--content-align-{{ section.settings.desktop_content_alignment }} banner--content-align-mobile-{{ section.settings.mobile_content_alignment }} banner--{{ section.settings.video_height }}{{ stacked_class }}{% if section.settings.show_text_below %} banner--mobile-bottom{%- endif -%}{% if section.settings.show_text_box == false %} banner--desktop-transparent{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
+>
+  {%- if section.settings.video != blank or section.settings.mp4_video != blank -%}
+    <div class="banner__media media{{ placeholder_class }}{{ half_class }}{% if section.settings.video_behavior != 'none' %} animate--{{ section.settings.video_behavior }}{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+      {%- liquid
+        if section.settings.video_2 != blank or section.settings.mp4_video_2 != blank
+          assign video_class = 'banner__media-video-half'
+        endif
+
+        assign has_second_video = false
+        if section.settings.video_2 != blank or section.settings.mp4_video_2 != blank
+          assign has_second_video = true
+        endif
+
+        if has_second_video and section.settings.stack_videos_on_mobile
+          assign sizes = stacked_sizes
+        elsif has_second_video
+          assign sizes = half_width
+        else
+          assign sizes = full_width
+        endif
+      -%}
+
+      {%- if section.settings.video.type == 'youtube' -%}
+        <div class="{{ video_class }} video-container">
+          <iframe
+            src="https://www.youtube.com/embed/{{ section.settings.video.id }}?autoplay=1&mute=1&loop=1&playlist={{ section.settings.video.id }}&controls={% if section.settings.show_video_controls %}1{% else %}0{% endif %}&playsinline=1&rel=0&enablejsapi=1"
+            frameborder="0"
+            allowfullscreen
+            allow="autoplay; encrypted-media"
+            loading="lazy"
+          ></iframe>
+        </div>
+      {%- elsif section.settings.video.type == 'vimeo' -%}
+        <div class="{{ video_class }} video-container">
+          <iframe
+            src="https://player.vimeo.com/video/{{ section.settings.video.id }}?autoplay=1&loop=1&background={% if section.settings.show_video_controls %}0{% else %}1{% endif %}&playsinline=1"
+            frameborder="0"
+            allowfullscreen
+            allow="autoplay; encrypted-media"
+            loading="lazy"
+          ></iframe>
+        </div>
+      {%- elsif section.settings.mp4_video != blank -%}
+        <div class="{{ video_class }} video-container">
+          {{
+            section.settings.mp4_video
+            | video_tag:
+              image_size: '1100x',
+              autoplay: true,
+              loop: true,
+              muted: true,
+              controls: section.settings.show_video_controls,
+              poster: section.settings.video_poster
+          }}
+        </div>
+      {%- else -%}
+        <div class="{{ video_class }} video-container placeholder">
+          {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+    </div>
+  {%- elsif section.settings.video_2 == blank and section.settings.mp4_video_2 == blank -%}
+    <div class="banner__media media placeholder{% if section.settings.video_behavior != 'none' %} animate--{{ section.settings.video_behavior }}{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+      {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    </div>
+  {%- endif -%}
+  {%- if section.settings.video_2 != blank or section.settings.mp4_video_2 != blank -%}
+    <div class="banner__media media{% if has_first_video %} banner__media-half{% endif %}{% if section.settings.video_behavior != 'none' %} animate--{{ section.settings.video_behavior }}{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+      {%- liquid
+        if section.settings.video != blank or section.settings.mp4_video != blank
+          assign video_class_2 = 'banner__media-video-half'
+        endif
+
+        assign has_first_video = false
+        if section.settings.video != blank or section.settings.mp4_video != blank
+          assign has_first_video = true
+        endif
+
+        assign has_second_video = false
+        if section.settings.video_2 != blank or section.settings.mp4_video_2 != blank
+          assign has_second_video = true
+        endif
+
+        if has_first_video and section.settings.stack_videos_on_mobile
+          assign sizes = stacked_sizes
+        elsif has_second_video
+          assign sizes = half_width
+        else
+          assign sizes = full_width
+        endif
+      -%}
+
+      {%- if section.settings.video_2.type == 'youtube' -%}
+        <div class="{{ video_class_2 }} video-container">
+          <iframe
+            src="https://www.youtube.com/embed/{{ section.settings.video_2.id }}?autoplay=1&mute=1&loop=1&playlist={{ section.settings.video_2.id }}&controls={% if section.settings.show_video_controls %}1{% else %}0{% endif %}&playsinline=1&rel=0&enablejsapi=1"
+            frameborder="0"
+            allowfullscreen
+            allow="autoplay; encrypted-media"
+            loading="lazy"
+          ></iframe>
+        </div>
+      {%- elsif section.settings.video_2.type == 'vimeo' -%}
+        <div class="{{ video_class_2 }} video-container">
+          <iframe
+            src="https://player.vimeo.com/video/{{ section.settings.video_2.id }}?autoplay=1&loop=1&background={% if section.settings.show_video_controls %}0{% else %}1{% endif %}&playsinline=1"
+            frameborder="0"
+            allowfullscreen
+            allow="autoplay; encrypted-media"
+            loading="lazy"
+          ></iframe>
+        </div>
+      {%- elsif section.settings.mp4_video_2 != blank -%}
+        <div class="{{ video_class_2 }} video-container">
+          {{
+            section.settings.mp4_video_2
+            | video_tag:
+              image_size: '1100x',
+              autoplay: true,
+              loop: true,
+              muted: true,
+              controls: section.settings.show_video_controls,
+              poster: section.settings.video_poster_2
+          }}
+        </div>
+      {%- else -%}
+        <div class="{{ video_class_2 }} video-container placeholder">
+          {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+  <div class="banner__content banner__content--{{ section.settings.desktop_content_position }} page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+    <div class="banner__box content-container content-container--full-width-mobile color-{{ section.settings.color_scheme }} gradient">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'heading' -%}
+            <h2
+              class="banner__heading inline-richtext {{ block.settings.heading_size }}"
+              {{ block.shopify_attributes }}
+            >
+              {{ block.settings.heading }}
+            </h2>
+          {%- when 'text' -%}
+            <div class="banner__text rte {{ block.settings.text_style }}" {{ block.shopify_attributes }}>
+              <p>{{ block.settings.text }}</p>
+            </div>
+          {%- when 'buttons' -%}
+            <div
+              class="banner__buttons"
+              {{ block.shopify_attributes }}
+            >
+              {%- if block.settings.button_label != blank -%}
+                <a
+                  {% if block.settings.button_link == blank %}
+                    role="link" aria-disabled="true"
+                  {% else %}
+                    href="{{ block.settings.button_link }}"
+                  {% endif %}
+                  class="banner__cta-button{% if block.settings.button_style_secondary %} button--secondary{% else %} button--primary{% endif %}"
+                >
+                  {{- block.settings.button_label | escape -}}
+                </a>
+              {%- endif -%}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<style>
+  .video-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .banner__cta-button {
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 1.1em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .banner__cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  .banner__cta-button.button--primary {
+    background: linear-gradient(135deg, var(--color-button), var(--color-button-text));
+    color: var(--color-button-text);
+    border: none;
+  }
+
+  .banner__cta-button.button--secondary {
+    background: transparent;
+    color: var(--color-button);
+    border: 2px solid var(--color-button);
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Stack-Video-Banner",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Video Options"
+    },
+    {
+      "type": "paragraph",
+      "content": "Choose either a YouTube/Vimeo link OR upload a video file"
+    },
+    {
+      "type": "video_url",
+      "id": "video",
+      "label": "Video URL",
+      "accept": ["youtube", "vimeo"],
+      "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+      "placeholder": "Use a YouTube or Vimeo link",
+      "info": "Link to a YouTube or Vimeo video"
+    },
+    {
+      "type": "video",
+      "id": "mp4_video",
+      "label": "Video Upload",
+      "info": "Upload a video file directly"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_poster",
+      "label": "Video poster image",
+      "info": "Image shown while video is loading"
+    },
+    {
+      "type": "header",
+      "content": "Second Video (Optional)"
+    },
+    {
+      "type": "video_url",
+      "id": "video_2",
+      "label": "Second Video URL",
+      "accept": ["youtube", "vimeo"],
+      "placeholder": "Use a YouTube or Vimeo link",
+      "info": "Link to a second YouTube or Vimeo video for split banner"
+    },
+    {
+      "type": "video",
+      "id": "mp4_video_2",
+      "label": "Second Video Upload",
+      "info": "Upload a second video file for split banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_poster_2",
+      "label": "Second video poster image",
+      "info": "Image shown while second video is loading"
+    },
+    {
+      "type": "header",
+      "content": "Video Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_video_controls",
+      "default": false,
+      "label": "Show video controls",
+      "info": "Show play, pause, and volume controls"
+    },
+    {
+      "type": "range",
+      "id": "video_overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "Video overlay opacity",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "video_height",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "medium",
+      "label": "Video height"
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_position",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "Top left"
+        },
+        {
+          "value": "top-center",
+          "label": "Top center"
+        },
+        {
+          "value": "top-right",
+          "label": "Top right"
+        },
+        {
+          "value": "middle-left",
+          "label": "Middle left"
+        },
+        {
+          "value": "middle-center",
+          "label": "Middle center"
+        },
+        {
+          "value": "middle-right",
+          "label": "Middle right"
+        },
+        {
+          "value": "bottom-left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "bottom-center",
+          "label": "Bottom center"
+        },
+        {
+          "value": "bottom-right",
+          "label": "Bottom right"
+        }
+      ],
+      "default": "middle-center",
+      "label": "Desktop content position"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_text_box",
+      "default": true,
+      "label": "Show text box"
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center",
+      "label": "Desktop content alignment"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "select",
+      "id": "video_behavior",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "ambient",
+          "label": "Ambient"
+        },
+        {
+          "value": "fixed",
+          "label": "Fixed"
+        },
+        {
+          "value": "zoom-in",
+          "label": "Zoom in"
+        }
+      ],
+      "default": "none",
+      "label": "Video behavior"
+    },
+    {
+      "type": "header",
+      "content": "Mobile"
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center",
+      "label": "Mobile content alignment"
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_videos_on_mobile",
+      "default": true,
+      "label": "Stack videos on mobile"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_text_below",
+      "default": true,
+      "label": "Show text below on mobile"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "default": "Stack-Video-Banner",
+          "label": "Heading"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "options": [
+            {
+              "value": "h2",
+              "label": "Medium"
+            },
+            {
+              "value": "h1",
+              "label": "Large"
+            },
+            {
+              "value": "h0",
+              "label": "Extra large"
+            }
+          ],
+          "default": "h1",
+          "label": "Heading size"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "default": "Give customers details about the banner video(s) or content on the template.",
+          "label": "Text"
+        },
+        {
+          "type": "select",
+          "id": "text_style",
+          "options": [
+            {
+              "value": "body",
+              "label": "Body"
+            },
+            {
+              "value": "subtitle",
+              "label": "Subtitle"
+            },
+            {
+              "value": "caption-with-letter-spacing",
+              "label": "Caption with letter spacing"
+            }
+          ],
+          "default": "body",
+          "label": "Text style"
+        }
+      ]
+    },
+    {
+      "type": "buttons",
+      "name": "Call to Action Button",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_label",
+          "default": "Shop Now",
+          "label": "Button label",
+          "info": "Create an eye-catching call to action"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "button_style_secondary",
+          "default": false,
+          "label": "Use outline style for button"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stack-Video-Banner",
+      "blocks": [
+        {
+          "type": "heading"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "buttons"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
