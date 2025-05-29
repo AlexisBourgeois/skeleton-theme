@@ -39,9 +39,11 @@
   </script>
 {% endif %}
 
-<section class="video-banner {% if section.settings.full_height %}video-banner--full-height{% endif %}" 
+<section class="video-banner banner banner--with-transparent-header {% if section.settings.full_height %}video-banner--full-height{% endif %}" 
          role="banner" 
-         aria-label="{{ section.settings.heading | escape | default: 'Video banner section' }}">
+         aria-label="{{ section.settings.heading | escape | default: 'Video banner section' }}"
+         data-section-type="video-banner"
+         data-section-id="{{ section.id }}">
   
   <div class="video-banner__media" role="img" aria-label="{{ section.settings.video_description | escape | default: 'Background video content' }}">
     {% if section.settings.video_url != blank %}
@@ -121,26 +123,27 @@
 
   {% comment %} Contenu texte {% endcomment %}
   {% if section.settings.heading != blank or section.settings.subheading != blank or section.settings.button_text != blank %}
-    <header class="video-banner__content">
-      <div class="video-banner__content-inner">
+    <header class="video-banner__content" data-alignment="{{ section.settings.text_alignment | default: 'center' }}">
+      <div class="video-banner__content-inner page-width">
         {% if section.settings.heading != blank %}
           {% case section.settings.heading_tag %}
             {% when 'h2' %}
-              <h2 class="video-banner__heading h1">{{ section.settings.heading | escape }}</h2>
+              <h2 class="video-banner__heading h1" style="color: {{ section.settings.text_color | default: '#ffffff' }};">{{ section.settings.heading | escape }}</h2>
             {% when 'h3' %}
-              <h3 class="video-banner__heading h1">{{ section.settings.heading | escape }}</h3>
+              <h3 class="video-banner__heading h1" style="color: {{ section.settings.text_color | default: '#ffffff' }};">{{ section.settings.heading | escape }}</h3>
             {% else %}
-              <h1 class="video-banner__heading h1">{{ section.settings.heading | escape }}</h1>
+              <h1 class="video-banner__heading h1" style="color: {{ section.settings.text_color | default: '#ffffff' }};">{{ section.settings.heading | escape }}</h1>
           {% endcase %}
         {% endif %}
         
         {% if section.settings.subheading != blank %}
-          <p class="video-banner__subheading">{{ section.settings.subheading | escape }}</p>
+          <p class="video-banner__subheading" style="color: {{ section.settings.text_color | default: '#ffffff' }};">{{ section.settings.subheading | escape }}</p>
         {% endif %}
         
         {% if section.settings.button_text != blank and section.settings.button_url != blank %}
           <a href="{{ section.settings.button_url }}" 
              class="video-banner__button btn btn--primary"
+             style="background-color: {{ section.settings.button_color | default: '#ffffff' }}; color: {{ section.settings.button_text_color | default: '#000000' }};"
              {% if section.settings.button_url contains 'http' %}rel="noopener"{% endif %}
              {% if section.settings.open_in_new_tab %}target="_blank"{% endif %}>
             {{ section.settings.button_text | escape }}

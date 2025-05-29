@@ -1,0 +1,164 @@
+/* Transparent Header Overlay Styles */
+
+/* Transparent header when overlaying content */
+.header-wrapper--transparent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: transparent;
+  border-bottom: none;
+}
+
+.header-wrapper--transparent .header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  border-radius: 0;
+}
+
+/* Header content styling for transparent state */
+.header-wrapper--transparent .header__heading-link .h2,
+.header-wrapper--transparent .header__heading-link,
+.header-wrapper--transparent .header__menu-item,
+.header-wrapper--transparent .header__icon,
+.header-wrapper--transparent .list-menu__item--link {
+  color: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.header-wrapper--transparent .header__heading-logo {
+  filter: brightness(0) invert(1) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+}
+
+/* SVG icons styling for transparent header */
+.header-wrapper--transparent .svg-wrapper,
+.header-wrapper--transparent .icon {
+  filter: brightness(0) invert(1) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+}
+
+/* Scrolled state - solid background */
+.header-wrapper--transparent.header-wrapper--scrolled {
+  background: rgba(var(--color-background), 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.08);
+}
+
+.header-wrapper--transparent.header-wrapper--scrolled .header {
+  background: transparent;
+}
+
+/* Restore normal colors when scrolled */
+.header-wrapper--transparent.header-wrapper--scrolled .header__heading-link .h2,
+.header-wrapper--transparent.header-wrapper--scrolled .header__heading-link,
+.header-wrapper--transparent.header-wrapper--scrolled .header__menu-item,
+.header-wrapper--transparent.header-wrapper--scrolled .header__icon,
+.header-wrapper--transparent.header-wrapper--scrolled .list-menu__item--link {
+  color: rgba(var(--color-foreground), 0.75) !important;
+  text-shadow: none;
+}
+
+.header-wrapper--transparent.header-wrapper--scrolled .header__heading-logo {
+  filter: none;
+}
+
+.header-wrapper--transparent.header-wrapper--scrolled .svg-wrapper,
+.header-wrapper--transparent.header-wrapper--scrolled .icon {
+  filter: none;
+}
+
+/* Menu dropdown adjustments for transparent header */
+.header-wrapper--transparent .header__submenu,
+.header-wrapper--transparent .mega-menu__content {
+  background: rgba(var(--color-background), 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(var(--color-foreground), 0.1);
+}
+
+.header-wrapper--transparent .header__submenu .header__menu-item,
+.header-wrapper--transparent .mega-menu__content .header__menu-item {
+  color: rgba(var(--color-foreground), 0.75) !important;
+  text-shadow: none;
+}
+
+/* Banner section adjustments when header is transparent */
+.banner--with-transparent-header {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.banner--with-transparent-header .banner__content {
+  padding-top: 12rem; /* Adjust based on your header height */
+}
+
+@media screen and (max-width: 749px) {
+  .banner--with-transparent-header .banner__content {
+    padding-top: 8rem;
+  }
+}
+
+/* Ensure video banners work properly with transparent header */
+.banner--with-transparent-header .banner__media {
+  top: 0;
+}
+
+/* Cart count bubble styling for transparent header */
+.header-wrapper--transparent .cart-count-bubble {
+  background: rgba(255, 255, 255, 0.9);
+  color: rgba(var(--color-foreground), 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.header-wrapper--transparent.header-wrapper--scrolled .cart-count-bubble {
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+}
+
+/* Announcement bar adjustments */
+.header-wrapper--transparent ~ .shopify-section:first-of-type .banner,
+.header-wrapper--transparent ~ .shopify-section:first-of-type .section {
+  margin-top: 0;
+}
+
+/* Mobile menu drawer styling */
+.header-wrapper--transparent .menu-drawer-container {
+  background: rgba(var(--color-background), 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Search modal styling */
+.header-wrapper--transparent .search-modal__content {
+  background: rgba(var(--color-background), 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Smooth transitions */
+.header-wrapper--transparent,
+.header-wrapper--transparent .header,
+.header-wrapper--transparent .header__heading-link,
+.header-wrapper--transparent .header__menu-item,
+.header-wrapper--transparent .header__icon {
+  transition: all 0.3s ease;
+}
+
+/* Ensure header stays on top of video content */
+.section-header.section-header--transparent {
+  position: absolute;
+  width: 100%;
+  z-index: 100;
+}
+
+/* Fix for sticky header with transparent overlay */
+.shopify-section-header-sticky.header-wrapper--transparent {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}

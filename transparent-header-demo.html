@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transparent Header Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Demo Header */
+        .demo-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 100;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .demo-header.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-header .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            transition: color 0.3s ease;
+        }
+
+        .demo-header.scrolled .logo {
+            color: #333;
+            text-shadow: none;
+        }
+
+        .demo-nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .demo-nav a {
+            color: white;
+            text-decoration: none;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            transition: color 0.3s ease;
+        }
+
+        .demo-header.scrolled .demo-nav a {
+            color: #333;
+            text-shadow: none;
+        }
+
+        /* Demo Video Banner */
+        .demo-video-banner {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-video-banner video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        .demo-video-banner .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        .demo-video-banner .content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            color: white;
+            max-width: 800px;
+            padding: 0 2rem;
+        }
+
+        .demo-video-banner h1 {
+            font-size: clamp(3rem, 6vw, 6rem);
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .demo-video-banner p {
+            font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+            margin-bottom: 3rem;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .demo-btn {
+            display: inline-block;
+            padding: 1.5rem 3rem;
+            background: white;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease-out 0.9s both;
+        }
+
+        .demo-btn:hover {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Demo Content */
+        .demo-content {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .demo-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .demo-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .demo-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .demo-feature {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .demo-feature h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .demo-nav {
+                display: none;
+            }
+            
+            .demo-video-banner {
+                height: 70vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo Header -->
+    <header class="demo-header" id="demoHeader">
+        <div class="logo">CleanLand</div>
+        <nav class="demo-nav">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <!-- Demo Video Banner -->
+    <section class="demo-video-banner" id="home">
+        <!-- Placeholder for video - replace with actual video -->
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); z-index: 1;"></div>
+        
+        <div class="overlay"></div>
+        
+        <div class="content">
+            <h1>Welcome to CleanLand</h1>
+            <p>Experience the future of sustainable living with our innovative eco-friendly solutions</p>
+            <a href="#about" class="demo-btn">Discover More</a>
+        </div>
+    </section>
+
+    <!-- Demo Content -->
+    <section class="demo-content" id="about">
+        <h2>Transparent Header Demo</h2>
+        <p>This demo shows how the transparent header works with video banners. The header starts transparent and becomes solid when you scroll.</p>
+        
+        <div class="demo-features">
+            <div class="demo-feature">
+                <h3>🎥 Video Background</h3>
+                <p>Supports YouTube, Vimeo, and uploaded MP4 files with fallback images</p>
+            </div>
+            <div class="demo-feature">
+                <h3>📱 Responsive Design</h3>
+                <p>Works perfectly on all devices with optimized mobile experience</p>
+            </div>
+            <div class="demo-feature">
+                <h3>🎨 Customizable</h3>
+                <p>Full control over colors, text, buttons, and overlay settings</p>
+            </div>
+            <div class="demo-feature">
+                <h3>⚡ Performance</h3>
+                <p>Optimized for speed with lazy loading and efficient animations</p>
+            </div>
+            <div class="demo-feature">
+                <h3>♿ Accessibility</h3>
+                <p>Built with accessibility in mind, supporting screen readers and keyboard navigation</p>
+            </div>
+            <div class="demo-feature">
+                <h3>🔧 Easy Setup</h3>
+                <p>Simple theme customizer settings - no code required</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- More content for scrolling -->
+    <section class="demo-content">
+        <h2>Keep Scrolling</h2>
+        <p>Notice how the header becomes solid with a background as you scroll down, and returns to transparent when you scroll back to the top.</p>
+        
+        <div style="height: 100vh; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+            <div style="text-align: center;">
+                <h3>Scroll back to top to see the transparent effect again</h3>
+                <p>The header will smoothly transition between transparent and solid states</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Demo transparent header functionality
+        const header = document.getElementById('demoHeader');
+        const scrollThreshold = 100;
+
+        function handleScroll() {
+            const scrollY = window.scrollY;
+            
+            if (scrollY > scrollThreshold) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        }
+
+        // Throttle scroll events for better performance
+        let ticking = false;
+        function throttleScroll() {
+            if (!ticking) {
+                requestAnimationFrame(function() {
+                    handleScroll();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+
+        window.addEventListener('scroll', throttleScroll);
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
